@@ -1,6 +1,6 @@
 # Spotial 팀 개발 가이드
 
-아이폰 16 Pro의 Safari에서, 사용자가 현재 맥락에 맞는 카드를 발견하고 저장 당시의 화면까지 찾아가는 과정을 시연한다. 세 사람은 같은 웹앱을 개발한다. 현재 진입점은 카드 인터랙션 연습본이며, 아래의 역할과 화면 흐름은 이번 구현의 기준이다. [Figma · Entry Contexts](https://www.figma.com/design/eCbrUgqMU4ytwqAss4DzKz/?node-id=7448-1916)
+아이폰 16 Pro의 Safari에서, 사용자가 현재 맥락에 맞는 카드를 발견하고 저장 당시의 화면까지 찾아가는 과정을 시연한다. 현재 진입점에서 Spot을 안쪽으로 당기거나 탭하면 Feed가 열린다. [Figma · Entry Contexts](https://www.figma.com/design/eCbrUgqMU4ytwqAss4DzKz/?node-id=7448-1916)
 
 ## 처음 시작하기
 
@@ -14,7 +14,26 @@ npm ci
 npm run dev
 ```
 
-터미널의 Local 주소로 실행한다. 현재 연습본은 주소 뒤에 `?mobile=1`을 붙이면 카드만 볼 수 있다. 같은 Wi-Fi의 아이폰에서는 터미널의 Network 주소로 화면을 확인한다. 마이크를 포함한 실기기 검수는 HTTPS 미리보기 주소에서 진행한다.
+터미널의 Local 주소로 실행한다. 같은 Wi-Fi의 아이폰에서는 터미널의 Network 주소로 화면을 확인한다. 마이크를 포함한 실기기 검수는 HTTPS 미리보기 주소에서 진행한다.
+
+## 성원 브랜치 시연
+
+| 실행 주소 뒤에 붙일 값 | 확인할 동작 |
+| --- | --- |
+| `?scenario=A` | Reminders에서 Spot을 당겨 Crown St의 피자 카드를 연다. 오른쪽 위 토글로 칩과 문장을 전환한다. |
+| `?scenario=B&view=feed` | Surry Hills에서 같은 피자집까지 걸리는 시간이 3분으로 보인다. |
+| `?scenario=C&view=feed` | Camera 맥락의 일몰 카드에서 손가락 두 개를 벌려 Summary를 연다. |
+| `?review=1` | 기존 카드 인터랙션 연습본을 연다. |
+
+카드 오른쪽 아래 흰 핸들을 내리면 Summary로 펼쳐진다. Summary 본문을 위로 밀면 현재 카드가 접히면서 다음 카드가 올라온다. 키보드로는 피드에 포커스를 둔 뒤 방향키로 카드를 고르고 Enter로 펼친다.
+
+현재 바이브토크·Full·앱 CTA는 선택한 카드와 목적지를 표시하는 연결 미리보기를 연다. 돌아가면 직전 카드 상태가 유지된다. 통합 시 `SpotialExperience`의 `renderDestination`에서 `kind` 값(`voice`, `text`, `full`, `app`)으로 팀원 화면을 연결한다. 매칭 성공 시 `onMatch({ status: 'matched', cardId, keywords })`가 피드를 갱신한다. 카드 콘텐츠는 성원 브랜치의 `src/card/feedPreview.js`를 사용 중이며, 통합 시 예주의 공유 데이터에 연결한다.
+
+**아이폰 16 Pro 검수에서 결정할 항목**
+
+- **광원과 글래스** — 실내 조명에서 맥락칩 텍스트가 읽히는지, 하단 블러가 Summary의 CTA를 가리는지 확인한다. 스크롤 중 끊김이 보이면 하단 블러부터 줄여 비교한다.
+- **손동작** — 한 손으로 약한 스와이프와 빠른 플릭을 각각 해 보고, Summary가 접히기만 해야 할 움직임과 다음 카드로 넘어갈 움직임 사이의 감도를 조정한다. 두 손가락을 벌리다 멈춰도 상태가 튀지 않는지 확인한다.
+- **화면 맞춤** — Safari 주소 막대를 펼치거나 접은 상태에서 글자 크기와 하단 버튼 위치를 비교한다. 현재는 Figma 구도를 유지하려고 안전 영역 안에 화면 전체를 비례 축소한다.
 
 ## 누가 무엇을 만드는가
 

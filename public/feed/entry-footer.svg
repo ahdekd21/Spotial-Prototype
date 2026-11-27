@@ -1,0 +1,23 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="881.305" height="779.333" viewBox="0 0 881.305 779.333" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<foreignObject x="0" y="0" width="881.305" height="779.333"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(50px);clip-path:url(#bgblur_0_0_6_clip_path);height:100%;width:100%"></div></foreignObject><g id="Vector 146466 (Stroke)" filter="url(#filter0_f_0_6)" data-figma-bg-blur-radius="100">
+<use xlink:href="#stroke0_0_6" fill="url(#paint0_radial_0_6)"/>
+<use xlink:href="#stroke0_0_6" fill="url(#paint1_linear_0_6)"/>
+</g>
+<defs>
+<filter id="filter0_f_0_6" x="0" y="0" width="881.305" height="779.333" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="0" result="effect1_foregroundBlur_0_6"/>
+</filter>
+<clipPath id="bgblur_0_0_6_clip_path" transform="translate(0 0)"><path d="M781.305 679.205C781.305 679.205 599.384 678.741 440.63 679.205C281.583 679.669 100 678.725 100 678.725V100C100 100 136.88 100 160.511 100C184.142 100 248.294 100 275.371 171.076C309.11 259.64 331.781 406.128 451.322 406.128C604.243 406.128 629.814 362.895 781.305 249.035V679.205Z"/>
+</clipPath><radialGradient id="paint0_radial_0_6" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(440.937 521.948) rotate(90.0932) scale(174.872 299.315)">
+<stop stop-opacity="0"/>
+<stop offset="1" stop-color="white"/>
+</radialGradient>
+<linearGradient id="paint1_linear_0_6" x1="440.653" y1="300.86" x2="440.653" y2="623.096" gradientUnits="userSpaceOnUse">
+<stop/>
+<stop offset="1" stop-opacity="0"/>
+</linearGradient>
+<path id="stroke0_0_6" d="M781.305 679.205C781.305 679.205 599.384 678.741 440.63 679.205C281.583 679.669 100 678.725 100 678.725V100C100 100 136.88 100 160.511 100C184.142 100 248.294 100 275.371 171.076C309.11 259.64 331.781 406.128 451.322 406.128C604.243 406.128 629.814 362.895 781.305 249.035V679.205Z"/>
+</defs>
+</svg>

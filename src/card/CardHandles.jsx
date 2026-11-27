@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 
 // A single closed perimeter keeps the two strokes attached during resizing.
-export function CardHandles({ progress, visible, scale, onChange, onSettle, reducedMotion }) {
+export function CardHandles({ progress, visible, scale, onChange, onSettle, reducedMotion, deckInput }) {
   const arrival = useMotionValue(0);
   const gesture = useRef(null);
   useEffect(() => {
@@ -50,7 +50,10 @@ export function CardHandles({ progress, visible, scale, onChange, onSettle, redu
     gesture.current=null;
     onSettle(cancelled ? Number(current.startProgress>.5) : Number(progress.get()>.45));
   }
-  const events=corner=>({
+  const events=corner=>deckInput ? {
+    'data-handle': corner,
+    onClick: event => { if (event.detail === 0) deckInput(); },
+  } : ({
     onPointerDown:event=>start(event,corner),onPointerMove:move,
     onPointerUp:event=>finish(event),onPointerCancel:event=>finish(event,true),
     onLostPointerCapture:event=>finish(event,true),
@@ -59,7 +62,7 @@ export function CardHandles({ progress, visible, scale, onChange, onSettle, redu
   return <motion.div className="card-handles" animate={{opacity:visible?1:0}}
     transition={{duration:.16}} style={{pointerEvents:visible?'auto':'none'}}>
     <svg aria-hidden="true" width="416" height="642">
-      <motion.path d={path} strokeDasharray={dashArray} strokeDashoffset={topOffset} />
+      <motion.path d={path} strokeDasharray={dashArray} strokeDashoffset={topOffset} style={deckInput ? {opacity:progress} : undefined} />
       <motion.path d={path} strokeDasharray={dashArray} strokeDashoffset={bottomOffset} />
     </svg>
     <motion.button className="corner-touch" disabled={!visible} style={{x:topX,y:0}} tabIndex={visible?0:-1}

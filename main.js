@@ -1,4 +1,5 @@
 import {context, saves, chunks, propose} from './pizza.js';
+import {prepareArtwork,mountVectors} from './artwork.js';
 const $=s=>document.querySelector(s);
 const el=id=>document.getElementById(id);
 const image=s=>'assets/'+s;
@@ -7,6 +8,8 @@ let deck=propose(), selected=0, depth='entry', textMode=false, appParent='full',
 let gesture=null, suppressUntil=0, summaryGesture=false;
 const current=()=>deck[selected];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+const preview = new URLSearchParams(location.search).get('view');
+const referenceEntry = ['feed','summary'].includes(preview);
 function size(){const r=el('device').getBoundingClientRect();el('device').style.setProperty('--u',r.width/440+'px');paint();}
 function setDepth(d){
   depth=d;
@@ -22,8 +25,9 @@ function enter(){
 el('spot').onclick=enter;
 el('spot').onpointerdown=e=>{const btn=e.currentTarget;btn.setPointerCapture(e.pointerId);const x=e.clientX;btn.onpointermove=m=>{const d=Math.min(0,m.clientX-x);btn.style.translate=d+'px';if(d< -32){btn.onpointermove=null;btn.style.translate='';enter()}};btn.onpointerup=btn.onpointercancel=()=>{btn.onpointermove=null;btn.style.translate=''}};
 function header(){
+  el('device').classList.toggle('text-mode',textMode);
   el('mode').setAttribute('aria-pressed',String(textMode));
-  el('context').innerHTML=textMode?'<p>In <b>Surry Hills</b> at 15:20, you’re looking for somewhere to eat.</p>':
+  el('context').innerHTML=textMode?(referenceEntry?'<p>At <b>Crown St</b> at 19:40, your reminders suggest somewhere to eat.</p>':'<p>In <b>Surry Hills</b> at 15:20, you’re looking for somewhere to eat.</p>'):
     '<div><strong>AT</strong><b>'+context.place+'</b><time>'+context.time+'</time></div><div><span>Maps</span><i>⌖</i><strong>FOR</strong><em>Eat</em></div>';
 }
 el('mode').onclick=()=>{textMode=!textMode;header()};
@@ -34,8 +38,18 @@ function detailPills(r){
 function cards(){
   stage.innerHTML=deck.map((r,i)=>'<article class="card" data-i="'+i+'"><div class="surface"><div class="inside"></div><h1>'+r.lead+' <span>'+r.tail+'</span></h1><div class="tags"><b>'+r.items[0].app+'</b><em>Eat</em></div><div class="orbs">'+[r.items[0],saves.post,saves.pin].map((s,k)=>'<img class="orb o'+k+'" src="'+image(k===0&&s.id==='message'?'dining.jpg':s.photo)+'" alt="'+s.title+'">').join('')+'</div><div class="caption"><p>'+r.prompt+' · <b>'+saves.pin.walk+' min</b> away</p><p>'+(r.id==='pick'?'“'+saves.message.text+'”':r.items[0].text)+'</p></div><div class="details">'+detailPills(r)+'</div></div><button class="handle lower" aria-label="Expand card"></button><button class="handle upper" aria-label="Open full Spotlight"></button></article>').join('');
   el('rail').querySelectorAll('.snap').forEach(anchor=>anchor.remove());
+  for(const [i,card] of [...stage.children].entries()){
+    card.dataset.recipe=deck[i].id;
+    for(const kind of ['full','refresh']){
+      const button=document.createElement('button');
+      button.className='vector-action '+kind;
+      button.setAttribute('aria-label',kind==='full'?'Expand Spotlight':'Regenerate suggestions');
+      card.append(button);
+    }
+  }
   deck.forEach((_,i)=>{const a=document.createElement('i');a.className='snap';a.style.top=i*100/deck.length+'%';el('rail').append(a)});
   el('rail').style.height=(deck.length*100)+'%';paint();
+  mountVectors();
 }
 function paint(){
   const h=scroller.clientHeight;
@@ -49,7 +63,7 @@ function paint(){
     const z=-(gap*350+Math.max(0,a-1)*155)*u;
     const y=(d>=0?1:-1)*(gap*(depth==='summary'?718:529)+Math.max(0,a-1)*200)*u;
     c.style.transform='translate3d(0,'+y+'px,'+z+'px) rotateX('+(reduce.matches?0:(d>=0?-1:1)*gap*26)+'deg)';
-    c.style.opacity=String(Math.exp(-a*1.28));
+    c.style.opacity=String(Math.max(0,1-Math.min(1,a)**2)*Math.exp(-a*1.28));
     c.style.zIndex=String(10-Math.round(a*3));c.inert=i!==selected;
     c.classList.toggle('expanded',depth==='summary'&&i===selected);
   }
@@ -68,6 +82,8 @@ el('device').onclick=e=>{
   if(performance.now()<suppressUntil)return;
   const b=e.target.closest('button');
   if(b?.matches('.back,#home'))back();
+  else if(b?.matches('.vector-action.full'))full();
+  else if(b?.matches('.vector-action.refresh')){setDepth('feed');goCard((selected+1)%deck.length)}
   else if(b?.dataset.app)openApp(b.dataset.app);
   else if(b?.dataset.source){if(depth==='summary')full();source(b.dataset.source)}
   else if(b?.matches('.handle'))depth==='full'?back():expand();
@@ -96,3 +112,5 @@ scroller.addEventListener('wheel',e=>{if(depth==='summary'&&e.deltaY)setDepth('f
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){back();return}if(e.target.matches('input'))return;if(depth==='feed'&&['ArrowDown','ArrowUp'].includes(e.key)){e.preventDefault();goCard(selected+(e.key==='ArrowDown'?1:-1))}if(e.key==='Enter'&&e.target===scroller)expand()});
 el('input').onsubmit=e=>{e.preventDefault();const input=el('input').querySelector('input'),q=input.value.trim();if(!q)return;const next=propose(q);if(!next.length){note('메뉴, 길찾기, 사진 중 무엇을 볼까요?');return}deck=next;setDepth('feed');scroller.scrollTop=0;cards();input.value='';input.blur();note(current().title)};
 header();cards();new ResizeObserver(size).observe(device);setDepth('entry');
+el('device').classList.toggle('reference-entry',referenceEntry);
+prepareArtwork().then(()=>{if(referenceEntry)setDepth(preview)}).catch(console.error);

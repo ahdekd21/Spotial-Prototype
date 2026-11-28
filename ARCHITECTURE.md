@@ -63,16 +63,13 @@ Olivia가 집에서 친구의 메시지를 저장했다면 **저장 위치는 �
 - 카드 상단은 #BAFF71, 하단은 대표 이미지 색이다. 같은 Spotlight는 모든 깊이에서 같은 테마를 쓴다. Full은 공통 그라디언트를 타일 좌표에 맞춰 잘라내므로 위젯 경계 양쪽의 색이 이어진다. 글래스·Spotial Active·하단 진행형 블러는 각각 독립 레이어로 비교한다.
 - Full의 쉐도잉 청크는 1차에서 도보 시간·일몰 등 출처 있는 사실을 모은 파생 표현으로 제안한다. 구성 설명의 숫자는 실제 묶음의 고유 저장 ID에서 계산한다. 두 표현의 표시를 위해 가상의 원본 저장을 추가하지 않는다.
 
-## 6. 현재 시연 및 담당
 
-성원이 데이터·청크·피자집 추천·텍스트 요청·모든 화면과 제스처를 구현한다. 정헌의 담당은 음성 기능이다. 첫 시연은 Maps에서 시작해 Spot을 당긴 뒤 Feed → Summary → Full로 진입한다. 지도·메시지는 앱 이미지로, 리뷰·사진은 Source View를 거쳐 앱 이미지로 이동한다. 각 화면의 뒤로 가기로 돌아온다.
+## 6. AI 인수인계와 첫 시연 완료 기준
 
-설치 없이 Node.js에서 `npm run build` 후 `npm start`를 실행한다. 런타임은 브라우저 ES 모듈과 네이티브 스크롤이다. `pizza.js`에서 원본과 카드 조합을 관리한다. 메뉴·길찾기·리뷰 중심의 세 조합을 비교할 수 있다. 사진은 시연용이며 영업시간·거리·가격은 고정된 예시 값이다. 기기 앱 화면은 로컬 PNG다.
+구현 범위는 음성을 제외한 피자집 왕복 전체다. 지도 화면의 Spot에서 출발해 Feed, Summary, Full로 들어가고 지도·메시지·리뷰·사진을 확인한 뒤 읽던 위치로 돌아온다. 촬영 시나리오는 후속 확장이다.
 
-다음 검수는 iPhone 17 Pro Safari의 실제 플릭 감도, 뒤쪽 카드의 깊이와 가독성, 하단 입력과 키보드, 핀치 우선순위다. 촬영 시나리오와 데이터 풀 확장은 이 검수 이후 단계다.
+카드 간 탐색에는 연속적인 feedPosition을 사용한다. 카드 전체가 원근 공간에서 뒤로 물러날수록 작고 어두워지도록 하며 글자와 사진의 비율을 보존한다. 선택한 카드의 단계 전환에는 독립적인 expansionProgress를 사용한다. Spotlight ID를 고정하고 공통 요소가 손가락 진행률을 따라 이동하도록 한다. 데이터 선택과 제스처 표현은 확정된 탐색 상태와 ID로만 연결한다.
 
-## 설계 근거
+완료 검사는 세 가지다. 하나의 원본 수정이 모든 깊이에 반영되어야 한다. 네 유형에서 올바른 경로로 왕복해 선택과 스크롤 위치가 복원되어야 한다. 마지막으로 iPhone 17 Pro에서 다른 카드로 이동하는 스크롤과 같은 카드를 펼치는 제스처의 차이가 분명해야 한다.
 
-로컬 원문은 `Spotial_GUI_Design_Spec.md`이다. 과거 세 시나리오 중 이번 기본값은 사용자가 새로 지정한 지도·촬영 두 상황이다. 청크 탭 분기는 이번 설명을 적용하고, 규격서의 상단 대표 이미지 진입도 함께 지원한다.
-
-[청크 에셋](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=11-273) · [Spotlight Full](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=1-2502) · [색상 변형](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=11-1990) · [Source View](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=11-1423) · [카드·맥락 에셋](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=11-155) · [화면 레퍼런스](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=11-1277)
+디자인 근거는 Spotial_GUI_Design_Spec.md와 [Figma 화면 레퍼런스](https://www.figma.com/design/a43THTQxqVrtzWHShDIzZf/?node-id=11-1277)다.
